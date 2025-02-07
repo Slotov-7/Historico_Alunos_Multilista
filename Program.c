@@ -61,7 +61,7 @@ void cadastrar_aluno(ListaAlunos *lista, char nome[], int matricula) {
 }
 
 // Função para cadastrar uma nova disciplina para um aluno
-void cadastrar_diciplina_aluno(Aluno *aluno, char nome[], float nota, float percPresenca, char situacao[], int periodo) {
+void cadastrar_disciplina_aluno(Aluno *aluno, char nome[], float nota, float percPresenca, char situacao[], int periodo) {
     Disciplina *aux, *nova_disciplina = (Disciplina *)malloc(sizeof(Disciplina)); // Aloca memória para uma nova disciplina
     if (nova_disciplina) {
         strcpy(nova_disciplina->nome, nome); // Copia o nome da disciplina
@@ -87,7 +87,7 @@ void cadastrar_diciplina_aluno(Aluno *aluno, char nome[], float nota, float perc
 }
 
 // Função para exibir os alunos cadastrados
-void imprimir_alunos(ListaAlunos *lista){
+void exibir_alunos(ListaAlunos *lista){
     Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
     if (aluno == NULL) {
         printf("Nenhum aluno cadastrado.\n"); // Mensagem de erro
@@ -96,20 +96,32 @@ void imprimir_alunos(ListaAlunos *lista){
     while (aluno) {
         printf("Nome: %s\n", aluno->nome); // Exibe o nome do aluno
         printf("Matricula: %d\n", aluno->matricula); // Exibe a matrícula do aluno
-        printf("Disciplinas:\n");
-        Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
-        while (disciplina) {
-            printf("  Nome: %s\n", disciplina->nome); // Exibe o nome da disciplina
-            printf("  Nota: %.2f\n", disciplina->nota); // Exibe a nota da disciplina
-            printf("  Percentual de presenca: %.2f%%\n", disciplina->percPresenca); // Exibe o percentual de presença
-            printf("  Situacao: %s\n", disciplina->situacao); // Exibe a situação da disciplina
-            printf("  Periodo: %d\n", disciplina->periodo); // Exibe o período da disciplina
-            disciplina = disciplina->proximo; // Avança para a próxima disciplina
-        }
         aluno = aluno->proximo; // Avança para o próximo aluno
     }
 }
-
+void exibir_historico(ListaAlunos *lista, int matricula) {
+    Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
+    if (aluno == NULL) {
+        printf("Nenhum aluno cadastrado.\n"); // Mensagem de erro
+    }
+    else {
+        while (aluno->proximo && aluno->matricula != matricula) {
+            aluno = aluno->proximo;
+        }
+        if (aluno->matricula == matricula){
+            printf("Disciplinas do aluno %s:\n", aluno->nome); // Exibe o nome do aluno
+            Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
+            while (disciplina) {
+                printf("  Nome: %s\n", disciplina->nome); // Exibe o nome da disciplina
+                printf("  Nota: %.2f\n", disciplina->nota); // Exibe a nota da disciplina
+                printf("  Percentual de presenca: %.2f%%\n", disciplina->percPresenca); // Exibe o percentual de presença
+                printf("  Situacao: %s\n", disciplina->situacao); // Exibe a situação da disciplina
+                printf("  Periodo: %d\n", disciplina->periodo); // Exibe o período da disciplina
+                disciplina = disciplina->proximo; // Avança para a próxima disciplina
+            }
+        }
+    }
+}
 
 int main() {
     ListaAlunos lista;// Declara uma lista de alunos
@@ -124,6 +136,7 @@ int main() {
         printf("1. Cadastrar Aluno\n");
         printf("2. Cadastrar Disciplina\n");
         printf("3. Exibir Alunos\n");
+        printf("4. Exibir Historico\n");
         printf("0. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -157,10 +170,15 @@ int main() {
                 scanf(" %[^\n]", situacao);
                 printf("Digite o periodo: ");
                 scanf("%d", &periodo);
-                cadastrar_diciplina_aluno(aluno, disciplinaNome, nota, presenca, situacao, periodo);
+                cadastrar_disciplina_aluno(aluno, disciplinaNome, nota, presenca, situacao, periodo);
                 break;
             case 3:// Exibir os alunos cadastrados
-                imprimir_alunos(&lista);
+                exibir_alunos(&lista);
+                break;
+            case 4:// Exibir o histórico de um aluno
+                printf("Digite a matricula do aluno: ");
+                scanf("%d", &matricula);
+                exibir_historico(&lista, matricula);
                 break;
 
             case 0:// Sair do programa
@@ -173,4 +191,3 @@ int main() {
 
     return 0;
 }
-
