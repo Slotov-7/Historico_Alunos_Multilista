@@ -86,6 +86,37 @@ void cadastrar_disciplina_aluno(Aluno *aluno, char nome[], float nota, float per
     }
 }
 
+// Função para remover um aluno da lista
+void remove_aluno(ListaAlunos *lista, int matricula) {
+    Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
+    while (aluno != NULL && aluno->matricula != matricula) { // Procura o aluno pela matrícula
+        aluno = aluno->proximo;
+    }
+    if (aluno == NULL) { // Se o aluno não for encontrado
+        printf("Aluno nao encontrado.\n");
+        return;
+    }
+    Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
+    Disciplina *aux;
+    while (disciplina != NULL) { // Libera a memória de todas as disciplinas do aluno
+        aux = disciplina;// Salva o ponteiro para a disciplina atual
+        disciplina = disciplina->proximo;// Avança para a próxima disciplina
+        free(aux);// Libera a memória da disciplina atual
+    }
+    if (aluno->anterior != NULL) { // Ajusta o ponteiro do aluno anterior, se existir
+        aluno->anterior->proximo = aluno->proximo;
+    } else { // Se o aluno for o primeiro da lista
+        lista->primeiro = aluno->proximo;// Atualiza o ponteiro para o primeiro aluno
+    }
+    if (aluno->proximo != NULL) { // Ajusta o ponteiro do próximo aluno, se existir
+        aluno->proximo->anterior = aluno->anterior;// Atualiza o ponteiro do próximo aluno
+    } else { // Se o aluno for o último da lista
+        lista->ultimo = aluno->anterior;// Atualiza o ponteiro para o último aluno
+    }
+    free(aluno); // Libera a memória do aluno
+    printf("Aluno removido com sucesso.\n");
+}
+
 // Função para exibir os alunos cadastrados
 void exibir_alunos(ListaAlunos *lista){
     Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
