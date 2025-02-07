@@ -166,8 +166,9 @@ int main() {
         printf("\n=== MENU ===\n");
         printf("1. Cadastrar Aluno\n");
         printf("2. Cadastrar Disciplina\n");
-        printf("3. Exibir Alunos\n");
-        printf("4. Exibir Historico\n");
+        printf("3. Remover aluno\n");
+        printf("4. Exibir Alunos\n");
+        printf("5. Exibir Historico\n");
         printf("0. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -203,10 +204,17 @@ int main() {
                 scanf("%d", &periodo);
                 cadastrar_disciplina_aluno(aluno, disciplinaNome, nota, presenca, situacao, periodo);
                 break;
-            case 3:// Exibir os alunos cadastrados
+
+            case 3:// Remover um aluno da lista
+                printf("Digite a matricula do aluno: ");
+                scanf("%d", &matricula);
+                remove_aluno(&lista, matricula);
+                break;
+
+            case 4:// Exibir os alunos cadastrados
                 exibir_alunos(&lista);
                 break;
-            case 4:// Exibir o histórico de um aluno
+            case 5:// Exibir o histórico de um aluno
                 printf("Digite a matricula do aluno: ");
                 scanf("%d", &matricula);
                 exibir_historico(&lista, matricula);
