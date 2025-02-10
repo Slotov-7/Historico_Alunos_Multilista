@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-//
-// Created by Guilherme Araújo on 07/02/2025.
-
 // Estrutura que representa uma disciplina
 typedef struct Disciplina {
     char nome[30]; // Nome da disciplina
@@ -62,7 +59,7 @@ void cadastrar_aluno(ListaAlunos *lista, char nome[], int matricula) {
 
 // Função para cadastrar uma nova disciplina para um aluno
 void cadastrar_disciplina_aluno(Aluno *aluno, char nome[], float nota, float percPresenca, char situacao[], int periodo) {
-    Disciplina *aux, *nova_disciplina = (Disciplina *)malloc(sizeof(Disciplina)); // Aloca memória para uma nova disciplina
+    Disciplina *nova_disciplina = (Disciplina *)malloc(sizeof(Disciplina)); // Aloca memória para uma nova disciplina
     if (nova_disciplina) {
         strcpy(nova_disciplina->nome, nome); // Copia o nome da disciplina
         nova_disciplina->nota = nota; // Define a nota da disciplina
@@ -74,7 +71,7 @@ void cadastrar_disciplina_aluno(Aluno *aluno, char nome[], float nota, float per
         if (aluno->diciplinas == NULL) { // Se a lista de disciplinas do aluno estiver vazia
             aluno->diciplinas = nova_disciplina; // A nova disciplina é a primeira da lista
         } else {
-            aux = aluno->diciplinas; // Ponteiro auxiliar para percorrer a lista de disciplinas
+            Disciplina *aux = aluno->diciplinas; // Ponteiro auxiliar para percorrer a lista de disciplinas
             while (aux->proximo) { // Percorre até o final da lista
                 aux = aux->proximo;
             }
@@ -97,9 +94,8 @@ void remove_aluno(ListaAlunos *lista, int matricula) {
         return;
     }
     Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
-    Disciplina *aux;
     while (disciplina != NULL) { // Libera a memória de todas as disciplinas do aluno
-        aux = disciplina;// Salva o ponteiro para a disciplina atual
+        Disciplina *aux = disciplina;// Salva o ponteiro para a disciplina atual
         disciplina = disciplina->proximo;// Avança para a próxima disciplina
         free(aux);// Libera a memória da disciplina atual
     }
@@ -118,7 +114,7 @@ void remove_aluno(ListaAlunos *lista, int matricula) {
 }
 
 // Função para exibir os alunos cadastrados
-void exibir_alunos(ListaAlunos *lista){
+void exibir_alunos(const ListaAlunos *lista){
     Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
     if (aluno == NULL) {
         printf("Nenhum aluno cadastrado.\n"); // Mensagem de erro
@@ -130,27 +126,32 @@ void exibir_alunos(ListaAlunos *lista){
         aluno = aluno->proximo; // Avança para o próximo aluno
     }
 }
-void exibir_historico(ListaAlunos *lista, int matricula) {
+void exibir_historico(const ListaAlunos *lista, int matricula) {
     Aluno *aluno = lista->primeiro; // Ponteiro para percorrer a lista de alunos
     if (aluno == NULL) {
         printf("Nenhum aluno cadastrado.\n"); // Mensagem de erro
+        return;
     }
-    else {
-        while (aluno->proximo && aluno->matricula != matricula) {
-            aluno = aluno->proximo;
-        }
-        if (aluno->matricula == matricula){
-            printf("Disciplinas do aluno %s:\n", aluno->nome); // Exibe o nome do aluno
-            Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
-            while (disciplina) {
-                printf("  Nome: %s\n", disciplina->nome); // Exibe o nome da disciplina
-                printf("  Nota: %.2f\n", disciplina->nota); // Exibe a nota da disciplina
-                printf("  Percentual de presenca: %.2f%%\n", disciplina->percPresenca); // Exibe o percentual de presença
-                printf("  Situacao: %s\n", disciplina->situacao); // Exibe a situação da disciplina
-                printf("  Periodo: %d\n", disciplina->periodo); // Exibe o período da disciplina
-                disciplina = disciplina->proximo; // Avança para a próxima disciplina
-            }
-        }
+    while (aluno != NULL && aluno->matricula != matricula) {
+        aluno = aluno->proximo;
+    }
+    if (aluno == NULL) {
+        printf("Aluno nao encontrado.\n");
+        return;
+    }
+    printf("Disciplinas do aluno %s:\n", aluno->nome); // Exibe o nome do aluno
+    Disciplina *disciplina = aluno->diciplinas; // Ponteiro para percorrer a lista de disciplinas do aluno
+    if (disciplina == NULL) {
+        printf("Nenhuma disciplina cadastrada para este aluno.\n");
+        return;
+    }
+    while (disciplina) {
+        printf("  Nome: %s\n", disciplina->nome); // Exibe o nome da disciplina
+        printf("  Nota: %.2f\n", disciplina->nota); // Exibe a nota da disciplina
+        printf("  Percentual de presenca: %.2f%%\n", disciplina->percPresenca); // Exibe o percentual de presença
+        printf("  Situacao: %s\n", disciplina->situacao); // Exibe a situação da disciplina
+        printf("  Periodo: %d\n", disciplina->periodo); // Exibe o período da disciplina
+        disciplina = disciplina->proximo; // Avança para a próxima disciplina
     }
 }
 
@@ -159,10 +160,13 @@ int main() {
     criar_lista(&lista);// Cria a lista de alunos
 
     int opcao, matricula, periodo;// Variáveis para armazenar a opção do menu, a matrícula do aluno e o período da disciplina
-    char nome[100], disciplinaNome[50], situacao[3];// Variáveis para armazenar o nome do aluno, o nome da disciplina e a situação da disciplina
     float nota, presenca;// Variáveis para armazenar a nota e o percentual de presença na disciplina
 
-    do {// Loop do menu
+    do {
+        char situacao[3];
+        char nome[100];
+        char disciplinaNome[50];
+        // Loop do menu
         printf("\n=== MENU ===\n");
         printf("1. Cadastrar Aluno\n");
         printf("2. Cadastrar Disciplina\n");
@@ -227,6 +231,5 @@ int main() {
                 printf("Opcao invalida!\n");
         }
     } while (opcao != 0);
-
     return 0;
 }
