@@ -33,9 +33,26 @@ void criar_lista(ListaAlunos *lista) {
     lista->ultimo = NULL;
 }
 
+Aluno* buscar_aluno(ListaAlunos *lista, int matricula) {
+    Aluno *atual = lista->primeiro;
+    while (atual != NULL) {
+        if (atual->matricula == matricula) {
+            return atual;
+        }
+        atual = atual->proximo;
+    }
+    return NULL;
+}
+
 // Função para cadastrar um novo aluno na lista
 void cadastrar_aluno(ListaAlunos *lista, char nome[], int matricula) {
     Aluno *novo_aluno = (Aluno *)malloc(sizeof(Aluno)); // Aloca memória para um novo aluno
+
+    if (buscar_aluno(lista, matricula) != NULL) {
+        printf("Erro: Ja existe um aluno com a matricula %d.\n", matricula);
+        return;
+    }
+
     if (novo_aluno) {
         strcpy(novo_aluno->nome, nome); // Copia o nome do aluno
         novo_aluno->matricula = matricula; // Define a matrícula do aluno
@@ -155,6 +172,13 @@ void exibir_historico(const ListaAlunos *lista, int matricula) {
     }
 }
 
+// Função para liberar toda a memória alocada
+void liberar_lista(ListaAlunos *lista) {
+    while (lista->primeiro) {
+        remove_aluno(lista, lista->primeiro->matricula);
+    }
+}
+
 int main() {
     ListaAlunos lista;// Declara uma lista de alunos
     criar_lista(&lista);// Cria a lista de alunos
@@ -231,5 +255,6 @@ int main() {
                 printf("Opcao invalida!\n");
         }
     } while (opcao != 0);
+    liberar_lista(&lista);
     return 0;
 }
