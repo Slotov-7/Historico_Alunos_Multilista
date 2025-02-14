@@ -1,3 +1,10 @@
+/* Allex Lemos de Souza Pinheiro
+Débora Diana Gonçalves dos Santos
+Guilherme Henrique Santos Araújo
+João Antônio Sousa da Silva
+João Victor Pereira Santos
+Miguel Lucas Santana Freire */
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
